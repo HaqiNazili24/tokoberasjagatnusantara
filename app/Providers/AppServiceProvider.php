@@ -14,8 +14,12 @@ class AppServiceProvider extends ServiceProvider
     {
         View::composer('*', function ($view) {
             $cartCount = 0;
-            if (auth()->check() && auth()->user()->isCustomer()) {
-                $cartCount = Cart::where('user_id', auth()->id())->sum('quantity');
+            try {
+                if (auth()->check() && auth()->user()->isCustomer()) {
+                    $cartCount = Cart::where('user_id', auth()->id())->sum('quantity');
+                }
+            } catch (\Throwable $e) {
+                $cartCount = 0;
             }
             $view->with('globalCartCount', $cartCount);
         });
