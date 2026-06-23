@@ -1,3 +1,5 @@
+/public/hot
+/bootstrap/cache/*.php
 /vendor
 /node_modules
 /public/storage
