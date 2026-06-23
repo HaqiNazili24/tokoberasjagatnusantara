@@ -72,4 +72,4 @@ RUN php artisan storage:link || true
 EXPOSE 80
 
 # Start Apache and clear cache on startup
-CMD bash -c "php artisan config:clear && php artisan view:clear && php artisan route:clear && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache && apache2-foreground"
+CMD bash -c "php artisan config:clear && php artisan view:clear && php artisan route:clear && php artisan migrate --force && php artisan db:seed --force && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache && apache2-foreground"
