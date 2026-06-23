@@ -11,7 +11,7 @@ Route::get('/run-migration', function () {
     try {
         Artisan::call('migrate', ['--force' => true]);
         return '<h3>Migration Status:</h3><pre>' . Artisan::output() . '</pre>';
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
         return '<h3>Migration Failed:</h3><pre>' . $e->getMessage() . '</pre>';
     }
 });
@@ -20,7 +20,7 @@ Route::get('/run-seed', function () {
     try {
         Artisan::call('db:seed', ['--force' => true]);
         return '<h3>Seeding Status:</h3><pre>' . Artisan::output() . '</pre>';
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
         return '<h3>Seeding Failed:</h3><pre>' . $e->getMessage() . '</pre>';
     }
 });
