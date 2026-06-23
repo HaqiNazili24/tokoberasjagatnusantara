@@ -25,6 +25,25 @@ Route::get('/run-seed', function () {
     }
 });
 
+Route::get('/test-db', function () {
+    try {
+        $host = env('DB_HOST');
+        $db = env('DB_DATABASE');
+        $user = env('DB_USERNAME');
+        $pass = env('DB_PASSWORD');
+        $port = env('DB_PORT');
+
+        $options = [
+            PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false,
+        ];
+
+        $pdo = new PDO("mysql:host=$host;port=$port;dbname=$db;charset=utf8mb4", $user, $pass, $options);
+        return "<h3>Raw DB Connection Test:</h3><pre>SUCCESSFULLY CONNECTED!</pre>";
+    } catch (\Throwable $e) {
+        return "<h3>Raw DB Connection Test:</h3><pre>FAILED: " . $e->getMessage() . "</pre>";
+    }
+});
+
 // ===== PUBLIC / CUSTOMER =====
 Route::get('/', [Customer\ShopController::class, 'home'])->name('home');
 Route::get('/products/{slug}', [Customer\ShopController::class, 'show'])->name('products.show');
