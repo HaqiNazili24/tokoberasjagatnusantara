@@ -47,11 +47,21 @@ RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf
 # Enable Apache mod_rewrite
 RUN a2enmod rewrite
 
+# Clear any Windows-compiled cache files from the build context
+RUN php artisan config:clear || true
+RUN php artisan view:clear || true
+RUN php artisan route:clear || true
+RUN php artisan cache:clear || true
+
 # Set directory permissions for Laravel storage and bootstrap cache
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
+# Create storage symlink
+RUN php artisan storage:link || true
+
 # Expose port 80
 EXPOSE 80
 
-CMD ["apache2-foreground"]
+# Start Apache and clear cache on startup
+CMD bash -c "php artisan config:clear && php artisan view:clear && php artisan route:clear && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache && apache2-foreground"
