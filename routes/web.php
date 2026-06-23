@@ -4,45 +4,6 @@ use App\Http\Controllers\Admin;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Customer;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Artisan;
-
-// ===== TEMPORARY MIGRATION ROUTES =====
-Route::get('/run-migration', function () {
-    try {
-        Artisan::call('migrate', ['--force' => true]);
-        return '<h3>Migration Status:</h3><pre>' . Artisan::output() . '</pre>';
-    } catch (\Throwable $e) {
-        return '<h3>Migration Failed:</h3><pre>' . $e->getMessage() . '</pre>';
-    }
-});
-
-Route::get('/run-seed', function () {
-    try {
-        Artisan::call('db:seed', ['--force' => true]);
-        return '<h3>Seeding Status:</h3><pre>' . Artisan::output() . '</pre>';
-    } catch (\Throwable $e) {
-        return '<h3>Seeding Failed:</h3><pre>' . $e->getMessage() . '</pre>';
-    }
-});
-
-Route::get('/test-db', function () {
-    try {
-        $host = env('DB_HOST');
-        $db = env('DB_DATABASE');
-        $user = env('DB_USERNAME');
-        $pass = env('DB_PASSWORD');
-        $port = env('DB_PORT');
-
-        $options = [
-            PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false,
-        ];
-
-        $pdo = new PDO("mysql:host=$host;port=$port;dbname=$db;charset=utf8mb4", $user, $pass, $options);
-        return "<h3>Raw DB Connection Test:</h3><pre>SUCCESSFULLY CONNECTED!</pre>";
-    } catch (\Throwable $e) {
-        return "<h3>Raw DB Connection Test:</h3><pre>FAILED: " . $e->getMessage() . "</pre>";
-    }
-});
 
 // ===== PUBLIC / CUSTOMER =====
 Route::get('/', [Customer\ShopController::class, 'home'])->name('home');
@@ -73,6 +34,26 @@ Route::middleware(['auth', 'customer'])->group(function () {
     Route::post('/orders/{order}/upload-proof', [Customer\OrderController::class, 'uploadProof'])->name('orders.upload-proof');
     Route::post('/orders/{order}/cancel', [Customer\OrderController::class, 'cancel'])->name('orders.cancel');
     Route::post('/orders/{order}/received', [Customer\OrderController::class, 'received'])->name('orders.received');
+});
+
+// ===== SETUP (HAPUS SETELAH ADMIN BERHASIL DIBUAT) =====
+Route::get('/setup-admin-x9k2p', function () {
+    $secret = request('key');
+    if ($secret !== 'jagatnusantara2024') {
+        abort(403, 'Forbidden');
+    }
+
+    \App\Models\User::updateOrCreate(
+        ['email' => 'admin@jagatnusantara.test'],
+        [
+            'full_name' => 'Admin Jagat Nusantara',
+            'phone'     => '081234567890',
+            'password'  => bcrypt('admin123'),
+            'role'      => 'admin',
+        ]
+    );
+
+    return response()->json(['status' => 'Akun admin berhasil dibuat!', 'email' => 'admin@jagatnusantara.test', 'password' => 'admin123']);
 });
 
 // ===== ADMIN =====
