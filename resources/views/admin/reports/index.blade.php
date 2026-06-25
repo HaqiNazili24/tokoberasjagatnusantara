@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.kepala_toko')
 @section('page-title','Laporan Penjualan')
 @section('content')
 
@@ -37,7 +37,7 @@
                 <button class="btn btn-tb-primary flex-grow-1">
                     <i class="bi bi-search"></i> Filter
                 </button>
-                <a href="{{ route('admin.reports.pdf', $filters) }}" class="btn btn-outline-danger" title="Ekspor PDF">
+                <a href="{{ route('kepala-toko.reports.pdf', $filters) }}" class="btn btn-outline-danger" title="Ekspor PDF">
                     <i class="bi bi-file-pdf"></i>
                 </a>
             </div>

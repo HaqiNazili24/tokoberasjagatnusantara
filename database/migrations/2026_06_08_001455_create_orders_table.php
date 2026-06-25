@@ -13,6 +13,8 @@ return new class extends Migration
     $table->foreignId('user_id')->constrained('users')->onDelete('restrict');
     $table->foreignId('address_id')->nullable()->constrained('addresses')->onDelete('restrict');
     $table->string('order_number')->unique();
+    $table->foreignId('courier_id')->nullable()->constrained('users')->onDelete('set null');
+    $table->string('delivery_proof_url')->nullable();
 
     // Snapshot alamat pengiriman
     $table->string('shipping_recipient')->nullable();

@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.kepala_toko')
 @section('page-title','Sub Kategori')
 @section('content')
 
@@ -10,7 +10,7 @@
             <div class="card-body">
                 <h6 class="fw-bold mb-1">Tambah Sub Kategori</h6>
                 <p class="text-muted small mb-3">Kelompokkan produk lebih spesifik di bawah kategori utama.</p>
-                <form action="{{ route('admin.sub-categories.store') }}" method="POST">
+                <form action="{{ route('kepala-toko.sub-categories.store') }}" method="POST">
                     @csrf
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Kategori Induk</label>
@@ -57,7 +57,7 @@
                             </td>
                             <td class="fw-semibold">{{ $s->name }}</td>
                             <td>
-                                <form action="{{ route('admin.sub-categories.destroy',$s) }}" method="POST" onsubmit="return confirm('Hapus sub kategori ini?')">
+                                <form action="{{ route('kepala-toko.sub-categories.destroy',$s) }}" method="POST" onsubmit="return confirm('Hapus sub kategori ini?')">
                                     @csrf @method('DELETE')
                                     <button class="btn btn-sm btn-outline-danger" title="Hapus">
                                         <i class="bi bi-trash"></i>
