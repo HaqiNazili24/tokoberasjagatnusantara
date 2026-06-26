@@ -103,6 +103,9 @@ class CheckoutController extends Controller
                     'quantity' => $it->quantity,
                     'subtotal' => $it->subtotal,
                 ]);
+
+                // Kurangi stok produk secara real-time
+                $it->product->decrement('stock', $it->quantity);
             }
 
             Cart::where('user_id', $userId)->delete();

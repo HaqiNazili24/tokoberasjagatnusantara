@@ -28,7 +28,7 @@ class ShopController extends Controller
     public function show(string $slug)
     {
         $product = Product::where('slug', $slug)->where('is_active', true)
-            ->with('subCategory.category')->firstOrFail();
+            ->with(['subCategory.category', 'reviews.user'])->firstOrFail();
         return view('customer.products.show', compact('product'));
     }
 

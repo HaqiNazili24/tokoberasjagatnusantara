@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.kepala_toko')
 @section('page-title','Kategori')
 @section('content')
 
@@ -10,7 +10,7 @@
             <div class="card-body">
                 <h6 class="fw-bold mb-1">Tambah Kategori Baru</h6>
                 <p class="text-muted small mb-3">Kategori utama untuk pengelompokan produk.</p>
-                <form action="{{ route('admin.categories.store') }}" method="POST">
+                <form action="{{ route('kepala-toko.categories.store') }}" method="POST">
                     @csrf
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Nama Kategori</label>
@@ -44,7 +44,7 @@
                         @forelse($categories as $c)
                         <tr>
                             <td>
-                                <form action="{{ route('admin.categories.update',$c) }}" method="POST" class="d-flex gap-2">
+                                <form action="{{ route('kepala-toko.categories.update',$c) }}" method="POST" class="d-flex gap-2">
                                     @csrf @method('PATCH')
                                     <input name="name" value="{{ $c->name }}" class="form-control form-control-sm">
                                     <button class="btn btn-sm btn-tb-outline flex-shrink-0" title="Simpan">
@@ -56,7 +56,7 @@
                                 <span class="admin-badge bg-primary">{{ $c->sub_categories_count }}</span>
                             </td>
                             <td>
-                                <form action="{{ route('admin.categories.destroy',$c) }}" method="POST" onsubmit="return confirm('Hapus kategori ini?')">
+                                <form action="{{ route('kepala-toko.categories.destroy',$c) }}" method="POST" onsubmit="return confirm('Hapus kategori ini?')">
                                     @csrf @method('DELETE')
                                     <button class="btn btn-sm btn-outline-danger" title="Hapus">
                                         <i class="bi bi-trash"></i>

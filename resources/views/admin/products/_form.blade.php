@@ -110,7 +110,7 @@
                     <button class="btn btn-tb-primary">
                         <i class="bi bi-check-lg me-2"></i>{{ $isEdit ? 'Simpan Perubahan' : 'Buat Produk' }}
                     </button>
-                    <a href="{{ route('admin.products.index') }}" class="btn btn-tb-outline">
+                    <a href="{{ route('kepala-toko.products.index') }}" class="btn btn-tb-outline">
                         Batal
                     </a>
                 </div>

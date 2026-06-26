@@ -14,18 +14,40 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Admin
+        // 1. Owner
         User::updateOrCreate(
-            ['email' => 'admin@jagatnusantara.test'],
+            ['email' => 'owner@jagatnusantara.test'],
             [
-                'full_name' => 'Admin Jagat Nusantara',
-                'phone' => '081234567890',
-                'password' => Hash::make('admin123'),
-                'role' => 'admin',
+                'full_name' => 'Owner Jagat Nusantara',
+                'phone' => '081234567891',
+                'password' => Hash::make('owner123'),
+                'role' => 'owner',
             ]
         );
 
-        // Sample customer
+        // 2. Karyawan
+        User::updateOrCreate(
+            ['email' => 'karyawan@jagatnusantara.test'],
+            [
+                'full_name' => 'Karyawan Jagat Nusantara',
+                'phone' => '081234567892',
+                'password' => Hash::make('karyawan123'),
+                'role' => 'karyawan',
+            ]
+        );
+
+        // 3. Kurir
+        User::updateOrCreate(
+            ['email' => 'kurir@jagatnusantara.test'],
+            [
+                'full_name' => 'Kurir Jagat Nusantara',
+                'phone' => '081234567893',
+                'password' => Hash::make('kurir123'),
+                'role' => 'kurir',
+            ]
+        );
+
+        // 4. Customer
         User::updateOrCreate(
             ['email' => 'customer@jagatnusantara.test'],
             [
@@ -40,17 +62,12 @@ class DatabaseSeeder extends Seeder
         $data = [
             'Beras' => [
                 'Premium' => [
-                    ['name' => 'Idola', 'variants' => [25], 'price_per_kg' => 16000],
+                    ['name' => 'Beras Idola', 'variants' => [25], 'price_per_kg' => 16000],
                 ],
                 'Medium' => [
-                    ['name' => 'Rojo Lele', 'variants' => [5, 10, 25], 'price_per_kg' => 13500],
-                    ['name' => 'Ramos Bandung', 'variants' => [5, 10, 25], 'price_per_kg' => 13000],
-                    ['name' => 'SPHP', 'variants' => [5], 'price_per_kg' => 11000],
-                ],
-            ],
-            'Minyak Goreng' => [
-                'Minyakita' => [
-                    ['name' => 'Minyakita', 'variants' => [1, 2], 'price_per_kg' => 15000],
+                    ['name' => 'Beras Rojo Lele', 'variants' => [5, 10, 25], 'price_per_kg' => 13500],
+                    ['name' => 'Beras Ramos Bandung', 'variants' => [5, 10, 25], 'price_per_kg' => 13000],
+                    ['name' => 'Beras SPHP', 'variants' => [5], 'price_per_kg' => 11000],
                 ],
             ],
         ];
@@ -69,10 +86,7 @@ class DatabaseSeeder extends Seeder
 
                 foreach ($products as $product) {
                     foreach ($product['variants'] as $kg) {
-                        $name = $product['name'] . ' ' . $kg . 'L';
-                        if ($catName === 'Beras') {
-                            $name = $product['name'] . ' ' . $kg . 'kg';
-                        }
+                        $name = $product['name'] . ' ' . $kg . 'kg';
                         $price = $kg * $product['price_per_kg'];
 
                         Product::firstOrCreate(
@@ -80,9 +94,9 @@ class DatabaseSeeder extends Seeder
                             [
                                 'sub_category_id' => $sub->id,
                                 'slug' => Str::slug($name) . '-' . uniqid(),
-                                'description' => "{$product['name']} kemasan {$kg}" . ($catName === 'Beras' ? 'kg' : 'L') . ". Kualitas {$subName} pilihan terbaik.",
+                                'description' => "{$product['name']} kemasan {$kg}kg. Kualitas {$subName} pilihan terbaik.",
                                 'price' => $price,
-                                'weight_label' => $kg . ($catName === 'Beras' ? 'kg' : 'L'),
+                                'weight_label' => $kg . 'kg',
                                 'stock' => 50,
                                 'is_active' => true,
                             ]
@@ -93,7 +107,9 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->command->info('Seed selesai!');
-        $this->command->info('Login admin   : admin@jagatnusantara.test / admin123');
-        $this->command->info('Login customer: customer@jagatnusantara.test / customer123');
+        $this->command->info('Login Owner         : owner@jagatnusantara.test / owner123');
+        $this->command->info('Login Karyawan      : karyawan@jagatnusantara.test / karyawan123');
+        $this->command->info('Login Kurir         : kurir@jagatnusantara.test / kurir123');
+        $this->command->info('Login Customer      : customer@jagatnusantara.test / customer123');
     }
 }

@@ -26,9 +26,19 @@ class User extends Authenticatable
         ];
     }
 
-    public function isAdmin(): bool
+    public function isOwner(): bool
     {
-        return $this->role === 'admin';
+        return $this->role === 'owner';
+    }
+
+    public function isKaryawan(): bool
+    {
+        return $this->role === 'karyawan';
+    }
+
+    public function isKurir(): bool
+    {
+        return $this->role === 'kurir';
     }
 
     public function isCustomer(): bool

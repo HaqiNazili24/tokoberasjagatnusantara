@@ -1,8 +1,10 @@
 <?php
 
-use App\Http\Controllers\Admin;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Customer;
+use App\Http\Controllers\Owner;
+use App\Http\Controllers\Karyawan;
+use App\Http\Controllers\Kurir;
 use Illuminate\Support\Facades\Route;
 
 // ===== PUBLIC / CUSTOMER =====
@@ -34,42 +36,45 @@ Route::middleware(['auth', 'customer'])->group(function () {
     Route::post('/orders/{order}/upload-proof', [Customer\OrderController::class, 'uploadProof'])->name('orders.upload-proof');
     Route::post('/orders/{order}/cancel', [Customer\OrderController::class, 'cancel'])->name('orders.cancel');
     Route::post('/orders/{order}/received', [Customer\OrderController::class, 'received'])->name('orders.received');
+    
+    // Rating & Ulasan
+    Route::post('/orders/{order}/review', [Customer\OrderController::class, 'storeReview'])->name('orders.review');
 });
 
-// ===== SETUP (HAPUS SETELAH ADMIN BERHASIL DIBUAT) =====
-Route::get('/setup-admin-x9k2p', function () {
-    $secret = request('key');
-    if ($secret !== 'jagatnusantara2024') {
-        abort(403, 'Forbidden');
-    }
-
-    \App\Models\User::updateOrCreate(
-        ['email' => 'admin@jagatnusantara.test'],
-        [
-            'full_name' => 'Admin Jagat Nusantara',
-            'phone'     => '081234567890',
-            'password'  => bcrypt('admin123'),
-            'role'      => 'admin',
-        ]
-    );
-
-    return response()->json(['status' => 'Akun admin berhasil dibuat!', 'email' => 'admin@jagatnusantara.test', 'password' => 'admin123']);
+// ===== OWNER =====
+Route::middleware(['auth', 'owner'])->prefix('owner')->name('owner.')->group(function () {
+    Route::get('/', [Owner\OwnerController::class, 'index'])->name('dashboard');
+    
+    // Kelola Akun Karyawan & Kurir
+    Route::get('/users', [Owner\OwnerController::class, 'usersIndex'])->name('users.index');
+    Route::get('/users/create', [Owner\OwnerController::class, 'usersCreate'])->name('users.create');
+    Route::post('/users', [Owner\OwnerController::class, 'usersStore'])->name('users.store');
+    Route::get('/users/{user}/edit', [Owner\OwnerController::class, 'usersEdit'])->name('users.edit');
+    Route::put('/users/{user}', [Owner\OwnerController::class, 'usersUpdate'])->name('users.update');
+    Route::delete('/users/{user}', [Owner\OwnerController::class, 'usersDestroy'])->name('users.destroy');
+    
+    // Kelola Produk (Tambah, Edit, Hapus)
+    Route::resource('products', Owner\ProductController::class)->except(['show']);
+    
+    // Activity Log / Audit Log
+    Route::get('/audit-logs', [Owner\OwnerController::class, 'auditLogs'])->name('audit-logs');
 });
 
-// ===== ADMIN =====
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', [Admin\DashboardController::class, 'index'])->name('dashboard');
+// ===== KARYAWAN =====
+Route::middleware(['auth', 'karyawan'])->prefix('karyawan')->name('karyawan.')->group(function () {
+    Route::get('/', [Karyawan\KaryawanController::class, 'index'])->name('dashboard');
+    Route::post('/products/{product}/stock', [Karyawan\KaryawanController::class, 'updateStock'])->name('products.stock');
+    Route::get('/orders/{order}', [Karyawan\KaryawanController::class, 'showOrder'])->name('orders.show');
+    Route::post('/orders/{order}/confirm-payment', [Karyawan\KaryawanController::class, 'confirmPayment'])->name('orders.confirm-payment');
+    Route::post('/orders/{order}/reject-payment', [Karyawan\KaryawanController::class, 'rejectPayment'])->name('orders.reject-payment');
+    Route::post('/orders/{order}/update-status', [Karyawan\KaryawanController::class, 'updateOrderStatus'])->name('orders.update-status');
+});
 
-    Route::resource('categories', Admin\CategoryController::class)->only(['index', 'store', 'update', 'destroy']);
-    Route::resource('sub-categories', Admin\SubCategoryController::class)->only(['index', 'store', 'update', 'destroy'])->parameters(['sub-categories' => 'subCategory']);
-    Route::resource('products', Admin\ProductController::class)->except(['show']);
-
-    Route::get('orders', [Admin\OrderController::class, 'index'])->name('orders.index');
-    Route::get('orders/{order}', [Admin\OrderController::class, 'show'])->name('orders.show');
-    Route::post('orders/{order}/confirm-payment', [Admin\OrderController::class, 'confirmPayment'])->name('orders.confirm-payment');
-    Route::post('orders/{order}/reject-payment', [Admin\OrderController::class, 'rejectPayment'])->name('orders.reject-payment');
-    Route::post('orders/{order}/update-status', [Admin\OrderController::class, 'updateStatus'])->name('orders.update-status');
-
-    Route::get('reports', [Admin\ReportController::class, 'index'])->name('reports.index');
-    Route::get('reports/pdf', [Admin\ReportController::class, 'pdf'])->name('reports.pdf');
+// ===== KURIR =====
+Route::middleware(['auth', 'kurir'])->prefix('kurir')->name('kurir.')->group(function () {
+    Route::get('/', [Kurir\KurirController::class, 'index'])->name('dashboard');
+    Route::get('/orders/{order}', [Kurir\KurirController::class, 'show'])->name('orders.show');
+    Route::post('/orders/{order}/status', [Kurir\KurirController::class, 'updateStatus'])->name('orders.status');
+    Route::post('/orders/{order}/proof', [Kurir\KurirController::class, 'uploadProof'])->name('orders.proof');
+    Route::post('/orders/{order}/confirm-cod', [Kurir\KurirController::class, 'confirmCodPayment'])->name('orders.confirm-cod');
 });

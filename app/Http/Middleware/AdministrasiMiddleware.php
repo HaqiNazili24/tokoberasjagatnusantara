@@ -6,12 +6,12 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class AdminMiddleware
+class AdministrasiMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (! auth()->check() || ! auth()->user()->isAdmin()) {
-            abort(403, 'Akses hanya untuk admin.');
+        if (! auth()->check() || ! auth()->user()->isAdministrasi()) {
+            abort(403, 'Akses hanya untuk bagian Administrasi.');
         }
         return $next($request);
     }

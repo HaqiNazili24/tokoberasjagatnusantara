@@ -58,12 +58,26 @@
 
         {{-- Bottom: User / Logout --}}
         <div class="cs-sidebar-footer">
-            @if(auth()->check() && auth()->user()->role === 'admin')
-            <div class="mb-2 px-2">
-                <a href="{{ route('admin.dashboard') }}" class="btn w-100 d-flex align-items-center justify-content-center gap-2 cs-admin-link" style="background:rgba(249,168,37,0.15); border: 1px solid #F9A825; color:#F9A825; border-radius:8px; font-weight:600; font-size:14px; padding:8px;" data-tooltip="Panel Admin">
-                    <i class="bi bi-speedometer2"></i> <span class="cs-nav-text">Panel Admin</span>
-                </a>
-            </div>
+            @if(auth()->check())
+                @if(auth()->user()->isOwner())
+                <div class="mb-2 px-2">
+                    <a href="{{ route('owner.dashboard') }}" class="btn w-100 d-flex align-items-center justify-content-center gap-2 cs-admin-link" style="background:rgba(0,117,74,0.15); border: 1px solid #00754A; color:#00754A; border-radius:8px; font-weight:600; font-size:14px; padding:8px;" data-tooltip="Panel Owner">
+                        <i class="bi bi-speedometer2"></i> <span class="cs-nav-text">Panel Owner</span>
+                    </a>
+                </div>
+                @elseif(auth()->user()->isKaryawan())
+                <div class="mb-2 px-2">
+                    <a href="{{ route('karyawan.dashboard') }}" class="btn w-100 d-flex align-items-center justify-content-center gap-2 cs-admin-link" style="background:rgba(0,117,74,0.15); border: 1px solid #00754A; color:#00754A; border-radius:8px; font-weight:600; font-size:14px; padding:8px;" data-tooltip="Panel Karyawan">
+                        <i class="bi bi-speedometer2"></i> <span class="cs-nav-text">Panel Karyawan</span>
+                    </a>
+                </div>
+                @elseif(auth()->user()->isKurir())
+                <div class="mb-2 px-2">
+                    <a href="{{ route('kurir.dashboard') }}" class="btn w-100 d-flex align-items-center justify-content-center gap-2 cs-admin-link" style="background:rgba(203,162,88,0.15); border: 1px solid #cba258; color:#cba258; border-radius:8px; font-weight:600; font-size:14px; padding:8px;" data-tooltip="Panel Kurir">
+                        <i class="bi bi-bicycle"></i> <span class="cs-nav-text">Panel Kurir</span>
+                    </a>
+                </div>
+                @endif
             @endif
 
             @auth

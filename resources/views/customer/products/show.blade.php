@@ -74,4 +74,52 @@
         </div>
     </div>
 </div>
+
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm rounded-4 bg-white p-4">
+            <h4 class="fw-bold mb-4 text-dark"><i class="bi bi-star-fill text-warning me-2"></i>Ulasan Pelanggan ({{ $product->reviews->count() }})</h4>
+            
+            <div class="d-flex align-items-center mb-4 p-3 rounded" style="background-color: #f2f0eb; max-width: 320px;">
+                <div class="fs-1 fw-bold text-success me-3">{{ $product->average_rating }}</div>
+                <div>
+                    <div class="text-warning">
+                        @for($i=1; $i<=5; $i++)
+                            @if($i <= round($product->average_rating))
+                                ⭐
+                            @else
+                                
+                            @endif
+                        @endfor
+                    </div>
+                    <small class="text-muted">Rata-rata rating beras ini</small>
+                </div>
+            </div>
+
+            <div class="list-group list-group-flush">
+                @forelse($product->reviews as $review)
+                <div class="list-group-item px-0 py-3" style="border-color: #edebe9 !important;">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <strong class="text-dark d-block mb-1">{{ $review->user->full_name }}</strong>
+                            <div class="text-warning mb-2" style="font-size: 12px;">
+                                @for($i=1; $i<=5; $i++)
+                                    {{ $i <= $review->rating ? '⭐' : '' }}
+                                @endfor
+                            </div>
+                            <p class="text-dark mb-0" style="font-size: 14px;">{{ $review->comment }}</p>
+                        </div>
+                        <small class="text-muted">{{ $review->created_at->format('d M Y') }}</small>
+                    </div>
+                </div>
+                @empty
+                <div class="text-center py-4 text-muted">
+                    <i class="bi bi-chat-left-dots fs-1 opacity-25 d-block mb-2"></i>
+                    Belum ada ulasan untuk produk ini.
+                </div>
+                @endforelse
+            </div>
+        </div>
+    </div>
+</div>
 @endsection

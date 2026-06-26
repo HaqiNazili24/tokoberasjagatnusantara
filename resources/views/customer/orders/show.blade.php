@@ -71,6 +71,45 @@
         </div>
     </div>
 
+    @if($order->status === 'selesai')
+    <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white p-4">
+        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-star-fill text-warning me-2"></i>Ulasan & Rating Produk</h5>
+        <p class="text-muted small">Berikan ulasan dan rating Anda untuk beras yang Anda beli agar dapat membantu kami meningkatkan pelayanan.</p>
+        
+        <form action="{{ route('orders.review', $order) }}" method="POST">
+            @csrf
+            @foreach($order->items as $idx => $it)
+                @php
+                    $existingReview = \App\Models\Review::where('order_id', $order->id)->where('product_id', $it->product_id)->first();
+                @endphp
+                <div class="mb-3 p-3 rounded" style="background-color: #f2f0eb;">
+                    <strong class="text-dark d-block mb-2">{{ $it->product_name_snapshot }}</strong>
+                    <input type="hidden" name="reviews[{{ $idx }}][product_id]" value="{{ $it->product_id }}">
+                    
+                    <div class="mb-2">
+                        <label class="form-label text-muted small fw-bold">Rating:</label>
+                        <select name="reviews[{{ $idx }}][rating]" class="form-select form-select-sm" style="width: 180px; border-radius: 8px;" required>
+                            <option value="5" @selected($existingReview?->rating == 5)>⭐⭐⭐⭐⭐ (5 - Sangat Puas)</option>
+                            <option value="4" @selected($existingReview?->rating == 4)>⭐⭐⭐⭐ (4 - Puas)</option>
+                            <option value="3" @selected($existingReview?->rating == 3)>⭐⭐⭐ (3 - Biasa Saja)</option>
+                            <option value="2" @selected($existingReview?->rating == 2)>⭐⭐ (2 - Kurang Puas)</option>
+                            <option value="1" @selected($existingReview?->rating == 1)>⭐ (1 - Buruk)</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="form-label text-muted small fw-bold">Ulasan:</label>
+                        <textarea name="reviews[{{ $idx }}][comment]" class="form-control form-control-sm" rows="2" style="border-radius: 8px;" placeholder="Tulis ulasan Anda tentang kualitas beras ini...">{{ $existingReview?->comment ?? '' }}</textarea>
+                    </div>
+                </div>
+            @endforeach
+            <button type="submit" class="btn text-white w-100" style="background-color: #00754A; border-radius: 50px; padding: 10px; font-weight: 600; border: none; transition: transform 0.2s;" onmousedown="this.style.transform='scale(0.95)'" onmouseup="this.style.transform='scale(1)'">
+                Kirim Ulasan & Rating
+            </button>
+        </form>
+    </div>
+    @endif
+
     <div class="card border-0 shadow-sm rounded-4 bg-white p-4">
         <h5 class="fw-bold text-dark mb-3">Alamat Pengiriman</h5>
         <div class="p-3 bg-light rounded-3">

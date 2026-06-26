@@ -11,11 +11,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // Trust all proxies so Laravel detects HTTPS correctly behind Render's load balancer
-        $middleware->trustProxies(at: '*');
-
         $middleware->alias([
-            'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'owner' => \App\Http\Middleware\OwnerMiddleware::class,
+            'karyawan' => \App\Http\Middleware\KaryawanMiddleware::class,
+            'kurir' => \App\Http\Middleware\KurirMiddleware::class,
+            'kepala_toko' => \App\Http\Middleware\KepalaTokoMiddleware::class,
+            'administrasi' => \App\Http\Middleware\AdministrasiMiddleware::class,
+            'pegawai' => \App\Http\Middleware\PegawaiMiddleware::class,
             'customer' => \App\Http\Middleware\CustomerMiddleware::class,
         ]);
     })

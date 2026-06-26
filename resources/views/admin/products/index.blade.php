@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.kepala_toko')
 @section('page-title','Produk')
 @section('content')
 
@@ -8,7 +8,7 @@
         <h6 class="fw-bold mb-0">Daftar Produk</h6>
         <small class="text-muted">Kelola semua produk yang tersedia di toko.</small>
     </div>
-    <a href="{{ route('admin.products.create') }}" class="btn btn-tb-primary">
+    <a href="{{ route('kepala-toko.products.create') }}" class="btn btn-tb-primary">
         <i class="bi bi-plus-lg me-1"></i> Produk Baru
     </a>
 </div>
@@ -64,10 +64,10 @@
                     </td>
                     <td>
                         <div class="d-flex gap-1">
-                            <a href="{{ route('admin.products.edit',$p) }}" class="btn btn-sm btn-tb-outline" title="Edit">
+                            <a href="{{ route('kepala-toko.products.edit',$p) }}" class="btn btn-sm btn-tb-outline" title="Edit">
                                 <i class="bi bi-pencil"></i>
                             </a>
-                            <form action="{{ route('admin.products.destroy',$p) }}" method="POST" onsubmit="return confirm('Hapus produk ini?')">
+                            <form action="{{ route('kepala-toko.products.destroy',$p) }}" method="POST" onsubmit="return confirm('Hapus produk ini?')">
                                 @csrf @method('DELETE')
                                 <button class="btn btn-sm btn-outline-danger" title="Hapus">
                                     <i class="bi bi-trash"></i>
@@ -80,7 +80,7 @@
                 <tr>
                     <td colspan="7" class="text-center text-muted py-5">
                         <i class="bi bi-box-seam fs-2 d-block mb-2 opacity-25"></i>
-                        Belum ada produk. <a href="{{ route('admin.products.create') }}" class="text-tb-green">Tambah sekarang</a>
+                        Belum ada produk. <a href="{{ route('kepala-toko.products.create') }}" class="text-tb-green">Tambah sekarang</a>
                     </td>
                 </tr>
                 @endforelse

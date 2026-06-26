@@ -25,9 +25,17 @@ class AuthController extends Controller
         }
 
         $request->session()->regenerate();
-        return Auth::user()->isAdmin()
-            ? redirect()->intended(route('admin.dashboard'))
-            : redirect()->intended(route('home'));
+        
+        $user = Auth::user();
+        if ($user->isOwner()) {
+            return redirect()->intended(route('owner.dashboard'));
+        } elseif ($user->isKaryawan()) {
+            return redirect()->intended(route('karyawan.dashboard'));
+        } elseif ($user->isKurir()) {
+            return redirect()->intended(route('kurir.dashboard'));
+        }
+        
+        return redirect()->intended(route('home'));
     }
 
     public function register(Request $request)
