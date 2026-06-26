@@ -65,8 +65,9 @@ RUN php artisan cache:clear || true
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Create storage symlink
-RUN php artisan storage:link || true
+# Remove any existing public/storage symlink or directory from build context
+# (storage:link will be re-created at container startup by docker-start.sh)
+RUN rm -rf /var/www/html/public/storage
 
 # Expose port 80
 EXPOSE 80

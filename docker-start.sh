@@ -72,8 +72,23 @@ php artisan migrate --force || true
 echo "==> Running seeders..."
 php artisan db:seed --force || true
 
-# --- Create storage symlink ---
-php artisan storage:link || true
+# --- Create storage symlink (remove stale link first) ---
+echo "==> Creating storage symlink..."
+rm -rf /var/www/html/public/storage
+php artisan storage:link --force || ln -s /var/www/html/storage/app/public /var/www/html/public/storage
+
+# Verify symlink
+if [ -L /var/www/html/public/storage ]; then
+    echo "==> Storage symlink OK: $(readlink /var/www/html/public/storage)"
+else
+    echo "==> WARNING: Storage symlink creation failed, using direct copy..."
+    mkdir -p /var/www/html/public/storage
+    cp -r /var/www/html/storage/app/public/. /var/www/html/public/storage/
+fi
+
+# Ensure symlink target is accessible by Apache
+chown -R www-data:www-data /var/www/html/storage
+chmod -R 775 /var/www/html/storage
 
 echo "==> Starting Apache in foreground..."
 exec apache2-foreground
