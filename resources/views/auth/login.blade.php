@@ -12,7 +12,7 @@
                         <p class="text-muted small">Silakan masuk untuk melanjutkan belanja beras premium</p>
                     </div>
             
-            <form method="POST">
+            <form method="POST" action="{{ route('login') }}">
                 @csrf
                 <div class="form-floating mb-3">
                     <input type="email" name="email" class="form-control" id="emailFloating" value="{{ old('email') }}" placeholder="name@example.com" required>
