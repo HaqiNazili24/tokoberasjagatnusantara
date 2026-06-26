@@ -6,42 +6,55 @@ export PORT=${PORT:-80}
 
 echo "==> Starting with PORT=$PORT"
 
+# --- Write .env from Render environment variables ---
+cd /var/www/html
+
+echo "==> Writing .env from environment variables..."
+cat > .env <<EOF
+APP_NAME="${APP_NAME:-Toko Beras Jagat Nusantara}"
+APP_ENV=${APP_ENV:-production}
+APP_KEY=${APP_KEY}
+APP_DEBUG=${APP_DEBUG:-false}
+APP_URL=${APP_URL:-https://tokoberasjagatnusantara.onrender.com}
+
+LOG_CHANNEL=${LOG_CHANNEL:-stderr}
+LOG_LEVEL=${LOG_LEVEL:-error}
+
+DB_CONNECTION=${DB_CONNECTION:-mysql}
+DB_HOST=${DB_HOST}
+DB_PORT=${DB_PORT:-3306}
+DB_DATABASE=${DB_DATABASE}
+DB_USERNAME=${DB_USERNAME}
+DB_PASSWORD=${DB_PASSWORD}
+
+BROADCAST_DRIVER=${BROADCAST_DRIVER:-log}
+CACHE_DRIVER=${CACHE_DRIVER:-file}
+FILESYSTEM_DISK=${FILESYSTEM_DISK:-public}
+QUEUE_CONNECTION=${QUEUE_CONNECTION:-sync}
+SESSION_DRIVER=${SESSION_DRIVER:-file}
+SESSION_LIFETIME=${SESSION_LIFETIME:-120}
+
+MAIL_MAILER=log
+MAIL_FROM_ADDRESS="noreply@tokoberasjagat.test"
+MAIL_FROM_NAME="\${APP_NAME}"
+
+STORE_NAME="${STORE_NAME:-Toko Beras Jagat Nusantara}"
+STORE_BANK_NAME="${STORE_BANK_NAME:-Bank BCA}"
+STORE_BANK_ACCOUNT="${STORE_BANK_ACCOUNT:-7112578865}"
+STORE_BANK_HOLDER="${STORE_BANK_HOLDER:-Rifki Maulana}"
+SHIPPING_FLAT_RATE=${SHIPPING_FLAT_RATE:-10000}
+
+ASSET_URL=${ASSET_URL:-https://tokoberasjagatnusantara.onrender.com}
+EOF
+
+echo "==> .env written successfully"
+
 # --- Fix Apache to listen on 0.0.0.0:$PORT ---
-# Replace Listen 80 with Listen 0.0.0.0:$PORT (force IPv4+IPv6 all interfaces)
 sed -i "s/^Listen 80$/Listen 0.0.0.0:${PORT}/" /etc/apache2/ports.conf
-
-# Update VirtualHost port in all enabled site configs
 sed -i "s/<VirtualHost \*:80>/<VirtualHost \*:${PORT}>/g" /etc/apache2/sites-available/*.conf
-
-# Ensure ServerName is set to suppress warning
 echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 echo "==> Apache configured to listen on 0.0.0.0:${PORT}"
-
-# --- Update Laravel .env for production ---
-cd /var/www/html
-
-# Override APP_URL if RENDER_EXTERNAL_URL is set (Render provides this)
-if [ -n "$RENDER_EXTERNAL_URL" ]; then
-    sed -i "s|APP_URL=.*|APP_URL=${RENDER_EXTERNAL_URL}|" .env
-fi
-
-# Set APP_ENV to production on Render
-sed -i "s|APP_ENV=.*|APP_ENV=production|" .env
-
-# Override DB settings from environment if provided (set these in Render dashboard)
-if [ -n "$DB_HOST" ]; then
-    sed -i "s|DB_HOST=.*|DB_HOST=${DB_HOST}|" .env
-fi
-if [ -n "$DB_DATABASE" ]; then
-    sed -i "s|DB_DATABASE=.*|DB_DATABASE=${DB_DATABASE}|" .env
-fi
-if [ -n "$DB_USERNAME" ]; then
-    sed -i "s|DB_USERNAME=.*|DB_USERNAME=${DB_USERNAME}|" .env
-fi
-if [ -n "$DB_PASSWORD" ]; then
-    sed -i "s|DB_PASSWORD=.*|DB_PASSWORD=${DB_PASSWORD}|" .env
-fi
 
 # --- Fix permissions ---
 chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
@@ -49,12 +62,18 @@ chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # --- Clear Laravel caches ---
 php artisan config:clear || true
-php artisan view:clear  || true
-php artisan route:clear || true
+php artisan view:clear   || true
+php artisan route:clear  || true
 
 # --- Run migrations and seeders ---
+echo "==> Running migrations..."
 php artisan migrate --force || true
-php artisan db:seed --force  || true
+
+echo "==> Running seeders..."
+php artisan db:seed --force || true
+
+# --- Create storage symlink ---
+php artisan storage:link || true
 
 echo "==> Starting Apache in foreground..."
 exec apache2-foreground
